@@ -1,3 +1,5 @@
+# 原工具链接
+https://github.com/mrknow001/RSC_Detector/
 # RSC_Detector-master
 针对原先版本加入了一键内存马功能
 <img width="1146" height="515" alt="图片" src="https://github.com/user-attachments/assets/37cf592c-bb9b-411b-87d8-e10661bc9e16" />
