@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { width: 350px; margin: 0; font-family: 'Segoe UI', sans-serif; background: #f4f6f8; color: #333; }
+        .header { background: #2c3e50; color: #fff; padding: 10px 15px; font-weight: 600; font-size: 14px; border-bottom: 3px solid #34495e; }
+        
+        .container { padding: 10px; display: flex; flex-direction: column; gap: 10px; }
+        
+        /* 卡片样式 */
+        .card { background: #fff; border: 1px solid #dce1e7; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .card-title { background: #eaeff2; padding: 8px 12px; font-size: 11px; font-weight: 700; color: #57606f; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #dce1e7; display: flex; justify-content: space-between; align-items: center; }
+        .card-body { padding: 10px 12px; font-size: 12px; }
+
+        /* 状态徽章 */
+        .badge { padding: 2px 6px; border-radius: 3px; font-size: 10px; color: #fff; font-weight: 600; }
+        .badge.gray { background: #95a5a6; }
+        .badge.green { background: #27ae60; }
+        .badge.red { background: #c0392b; }
+
+        /* 列表 */
+        ul { margin: 0; padding-left: 18px; line-height: 1.5; color: #2c3e50; }
+        li { margin-bottom: 2px; }
+
+        /* 输入框与按钮 */
+        .input-group { display: flex; margin-bottom: 8px; }
+        input[type="text"] { flex: 1; padding: 6px; border: 1px solid #bdc3c7; border-radius: 4px 0 0 4px; font-family: monospace; font-size: 11px; outline: none; }
+        input[type="text"]:focus { border-color: #3498db; }
+        
+        button { border: none; cursor: pointer; color: #fff; font-weight: 600; transition: 0.2s; padding: 8px; font-size: 11px; }
+        .btn-scan { background: #3498db; width: 100%; border-radius: 4px; }
+        .btn-scan:hover { background: #2980b9; }
+        
+        .btn-exploit { background: #e74c3c; border-radius: 0 4px 4px 0; padding: 0 15px; }
+        .btn-exploit:hover { background: #c0392b; }
+        .btn-exploit:disabled { background: #95a5a6; cursor: not-allowed; }
+
+        /* 结果区域 */
+        .result-box { margin-top: 8px; border-top: 1px dashed #eee; padding-top: 8px; display: none; }
+        .console-out { background: #2d3436; color: #00cec9; padding: 8px; border-radius: 4px; font-family: 'Consolas', monospace; font-size: 11px; margin-top: 5px; white-space: pre-wrap; word-break: break-all; }
+        .error-out { color: #e74c3c; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="header">RSC Security Tool</div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-title">
+                1. Passive Detection
+                <span id="passive-badge" class="badge gray">SCANNING</span>
+            </div>
+            <div class="card-body">
+                <ul id="passive-list"><li>Waiting for page...</li></ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">2. Active Fingerprint (RSC:1)</div>
+            <div class="card-body">
+                <button id="btnFingerprint" class="btn-scan">Start Fingerprint Probe</button>
+                <div id="fingerprint-result" class="result-box">
+                    <ul id="active-list"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="border-color: #fab1a0;">
+            <div class="card-title" style="background: #fff0eb; color: #c0392b;">3. RCE Exploit (CVE-2025-55182)</div>
+            <div class="card-body">
+                <div class="input-group">
+                    <input type="text" id="cmdInput" placeholder="Command (echo vulnerability_test)" value="echo vulnerability_test">
+                    <button id="btnExploit" class="btn-exploit">EXEC</button>
+                </div>
+                <div id="exploit-status" style="font-size: 10px; color: #7f8c8d; display:none;">Sending payload...</div>
+                <div id="exploit-result" class="result-box">
+                    <div id="rce-output" class="console-out"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="border-color: #9b59b6;">
+            <div class="card-title" style="background: #f5eef8; color: #8e44ad;">4. Memory Shell Injection</div>
+            <div class="card-body">
+                <button id="btnMemshell" class="btn-scan" style="background: #9b59b6;">💉 Inject Memory Shell</button>
+                <div id="memshell-status" style="font-size: 10px; color: #7f8c8d; display:none;">Injecting memshell...</div>
+                <div id="memshell-result" class="result-box">
+                    <div id="memshell-output" class="console-out"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="border-color: #8e44ad;">
+            <div class="card-title" style="background: #e8daef; color: #6c3483;">5. Memshell Command (/deep)</div>
+            <div class="card-body">
+                <div class="input-group">
+                    <input type="text" id="memshellCmdInput" placeholder="Command (whoami)" value="whoami">
+                    <button id="btnMemshellCmd" class="btn-exploit" style="background: #8e44ad;">RUN</button>
+                </div>
+                <div id="memshell-cmd-status" style="font-size: 10px; color: #7f8c8d; display:none;">Executing via /deep...</div>
+                <div id="memshell-cmd-result" class="result-box">
+                    <div id="memshell-cmd-output" class="console-out"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
